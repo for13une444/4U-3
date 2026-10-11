@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Метатег для защиты: запрещает поисковикам индексировать сайт -->
+    <meta name="robots" content="noindex, nofollow">
     <title>Для тебя 🌸</title>
+    <!-- Шрифты и библиотека конфетти -->
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: 'Comfortaa', cursive, sans-serif;
             background: linear-gradient(135deg, #ffeef2 0%, #ffd6e0 50%, #ffccd5 100%);
@@ -20,6 +29,8 @@
             padding: 16px;
             color: #4a3b40;
         }
+
+        /* Контейнер карточек */
         .card {
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(10px);
@@ -31,74 +42,248 @@
             text-align: center;
             display: none;
             animation: fadeIn 0.4s ease forwards;
+            position: relative;
         }
-        .card.active { display: flex; flex-direction: column; align-items: center; }
+
+        .card.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        h2 { font-size: 22px; margin-bottom: 20px; color: #d84a75; line-height: 1.4; }
-        .btn-group {
-            display: flex; gap: 15px; width: 100%; justify-content: center;
-            margin-top: 15px; position: relative; min-height: 55px;
+
+        /* Анимация тряски при неверном пароле */
+        .shake {
+            animation: shake 0.4s ease;
         }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #d84a75;
+            line-height: 1.4;
+        }
+
+        p.hint {
+            font-size: 14px;
+            color: #7a656d;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Поле ввода пароля */
+        .pass-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 2px solid #ffccd5;
+            background: #fff;
+            font-size: 16px; /* 16px предотвращает зум страницы на iPhone */
+            font-family: inherit;
+            text-align: center;
+            color: #d84a75;
+            font-weight: 700;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .pass-input:focus {
+            border-color: #ff758c;
+            box-shadow: 0 0 15px rgba(255, 117, 140, 0.35);
+        }
+
+        .error-msg {
+            color: #e63946;
+            font-size: 13px;
+            margin-top: 10px;
+            min-height: 18px;
+            font-weight: 600;
+        }
+
+        /* Кнопки */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 15px;
+            position: relative;
+            min-height: 55px;
+        }
+
         .btn {
-            border: none; outline: none; padding: 14px 26px; border-radius: 50px;
-            font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+            border: none;
+            outline: none;
+            padding: 14px 26px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
             font-family: inherit;
         }
+
         .btn-yes {
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
-            color: white; box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
-            flex: 1; max-width: 130px;
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
+            flex: 1;
+            max-width: 140px;
         }
+
+        .btn-yes:active {
+            transform: scale(0.95);
+        }
+
         .btn-no {
-            background: #f0f0f0; color: #888; flex: 1; max-width: 130px;
-            user-select: none; touch-action: none;
+            background: #f0f0f0;
+            color: #888;
+            flex: 1;
+            max-width: 140px;
+            user-select: none;
+            touch-action: none;
         }
+
+        /* Интерактивная кнопка-сердечко */
         .heart-btn {
             background: linear-gradient(135deg, #ff5e7e 0%, #ff8da1 100%);
-            color: white; padding: 14px 24px; border-radius: 50px; font-size: 16px;
-            font-weight: bold; margin-top: 20px; cursor: pointer; border: none;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
             box-shadow: 0 8px 25px rgba(255, 94, 126, 0.45);
-            display: inline-flex; align-items: center; gap: 8px; animation: pulse 1.8s infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 1.8s infinite;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .chat-title { font-size: 26px; font-weight: 700; color: #d84a75; margin-bottom: 12px; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Экран 2: Скриншот */
+        .chat-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #d84a75;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
         .screenshot-frame {
-            width: 100%; border-radius: 18px; overflow: hidden;
-            border: 3px solid #ffccd5; box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            background: #fff; margin-bottom: 12px;
+            width: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 3px solid #ffccd5;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            background: #fff;
+            margin-bottom: 12px;
         }
-        .screenshot-frame img { width: 100%; height: auto; display: block; object-fit: contain; max-height: 48vh; }
+
+        .screenshot-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            max-height: 48vh;
+        }
+
+        /* Экран 3: Текст */
         .letter-text {
-            font-size: 15px; line-height: 1.7; color: #554148; background: #fff5f7;
-            padding: 18px; border-radius: 18px; border-left: 4px solid #ff758c;
-            text-align: left; margin-bottom: 15px; white-space: pre-line;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #554148;
+            background: #fff5f7;
+            padding: 18px;
+            border-radius: 18px;
+            border-left: 4px solid #ff758c;
+            text-align: left;
+            margin-bottom: 15px;
+            white-space: pre-line;
         }
+
+        /* Экран 4: Хакерское сердечко */
         .hacker-box {
-            background: #140d12; color: #ff758c; font-family: 'JetBrains Mono', monospace;
-            border-radius: 20px; padding: 18px 12px; width: 100%; text-align: center;
-            box-shadow: 0 10px 30px rgba(20, 13, 18, 0.6); position: relative;
+            background: #140d12;
+            color: #ff758c;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 20px;
+            padding: 18px 12px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(20, 13, 18, 0.6);
+            position: relative;
         }
+
         .badge-1 {
-            font-size: 11px; opacity: 0.75; color: #ff9ebb; display: flex;
-            justify-content: space-between; margin-bottom: 10px; padding: 0 6px;
+            font-size: 11px;
+            opacity: 0.75;
+            color: #ff9ebb;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 0 6px;
         }
+
         .ascii-heart {
-            font-size: 10.5px; line-height: 1.15; letter-spacing: -0.5px; color: #ff5e7e;
-            text-shadow: 0 0 8px rgba(255, 94, 126, 0.8); white-space: pre; margin: 10px 0;
+            font-size: 10.5px;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            color: #ff5e7e;
+            text-shadow: 0 0 8px rgba(255, 94, 126, 0.8);
+            white-space: pre;
+            margin: 10px 0;
             display: inline-block;
         }
+
         .hacker-subtext {
-            font-size: 13px; color: #ffb3c6; margin-top: 10px; letter-spacing: 2px;
+            font-size: 13px;
+            color: #ffb3c6;
+            margin-top: 10px;
+            letter-spacing: 2px;
             animation: blink 1.2s infinite;
         }
-        @keyframes blink { 50% { opacity: 0.3; } }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
-    <div class="card active" id="screen1">
+
+    <!-- ЭКРАН 0: Ввод пароля -->
+    <div class="card active" id="screen0">
+        <div style="font-size: 44px; margin-bottom: 12px;">🔐🌸</div>
+        <h2>Только для тебя</h2>
+        <p class="hint">Этот сайт защищен. Введи красивую нашу будущую дату) ✨</p>
+        
+        <input type="text" id="passInput" class="pass-input" placeholder="" autocomplete="off">
+        <div id="errorMsg" class="error-msg"></div>
+
+        <button class="btn btn-yes" style="max-width: 100%; width: 100%; margin-top: 10px;" onclick="checkPassword()">
+            Открыть 💖
+        </button>
+    </div>
+
+    <!-- ЭКРАН 1: Вопрос про букет -->
+    <div class="card" id="screen1">
         <div style="font-size: 44px; margin-bottom: 10px;">🌸💐✨</div>
         <h2>Тебе понравился букет?</h2>
         <div class="btn-group">
@@ -107,6 +292,7 @@
         </div>
     </div>
 
+    <!-- ЭКРАН 2: Скриншот переписки -->
     <div class="card" id="screen2">
         <div class="chat-title">НИЧЕГО)))</div>
         <div class="screenshot-frame">
@@ -117,6 +303,7 @@
         </button>
     </div>
 
+    <!-- ЭКРАН 3: Твой искренний текст -->
     <div class="card" id="screen3">
         <div style="font-size: 34px; margin-bottom: 8px;">💌</div>
         <div class="letter-text">Я тебя люблю, и я помню каждые наши моменты. Я знаю, я поступил как конченый, я тоже не одобряю свое решение, но зато я понял, как мне не хватает тебя.
@@ -129,12 +316,14 @@
         </button>
     </div>
 
+    <!-- ЭКРАН 4: Хакерское сердечко -->
     <div class="card" id="screen4">
         <div class="hacker-box">
             <div class="badge-1">
                 <span>[sys.love_log]</span>
                 <span>1/??</span>
             </div>
+            
             <pre class="ascii-heart">
    01010101       10101010   
  010101010101   101010101010 
@@ -149,23 +338,72 @@
              010             
               1              
             </pre>
-            <div style="font-size: 11px; opacity: 0.65; margin-top: 5px;">memory_trace // 13.07</div>
-            <div class="hacker-subtext">[ 1/?? ]</div>
+
+            <div style="font-size: 11px; opacity: 0.65; margin-top: 5px;">
+                memory_trace // 13.07
+            </div>
+            <div class="hacker-subtext">
+                [ 1/?? ]
+            </div>
         </div>
     </div>
 
     <script>
-        function goToScreen(num) {
+        // ==========================================
+        // НАСТРОЙКА ПАРОЛЯ
+        // Принимает как "1307", так и "13.07"
+        // ==========================================
+        const VALID_PASSWORDS = ["27/07/27", "270727", "27.07.27"];
+
+        function checkPassword() {
+            const input = document.getElementById('passInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const card = document.getElementById('screen0');
+            const val = input.value.trim().toLowerCase();
+
+            if (VALID_PASSWORDS.includes(val)) {
+                errorMsg.innerText = "";
+                // Легкий победный салют конфетти
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+                goToScreen(1);
+            } else {
+                errorMsg.innerText = "Неверный код 🙈 Попробуй еще раз!";
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 450);
+                input.value = "";
+                input.focus();
+            }
+        }
+
+        // Вход по нажатию клавиши Enter на клавиатуре
+        document.getElementById('passInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Переходы между экранами
+        function goToScreen(screenNumber) {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            const target = document.getElementById('screen' + num);
-            if (target) target.classList.add('active');
+            const target = document.getElementById('screen' + screenNumber);
+            if (target) {
+                target.classList.add('active');
+            }
         }
 
+        // Экран букета
         function answerYes() {
-            confetti({ particleCount: 75, spread: 70, origin: { y: 0.6 } });
-            setTimeout(() => goToScreen(2), 500);
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            setTimeout(() => {
+                goToScreen(2);
+            }, 500);
         }
 
+        // Побег кнопки "Нет"
         const noBtn = document.getElementById('noBtn');
         function runaway() {
             const pad = 15;
@@ -176,9 +414,10 @@
             noBtn.style.top = (Math.floor(Math.random() * (maxY - pad)) + pad) + 'px';
             noBtn.style.zIndex = '9999';
         }
+
         noBtn.addEventListener('mouseenter', runaway);
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); runaway(); });
-        noBtn.addEventListener('click', (e) => { e.preventDefault(); runaway(); });
+        noBtn.addEventListener('touchstart', function(e) { e.preventDefault(); runaway(); });
+        noBtn.addEventListener('click', function(e) { e.preventDefault(); runaway(); });
     </script>
 </body>
 </html>
