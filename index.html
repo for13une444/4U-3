@@ -272,7 +272,6 @@
             font-weight: 700;
         }
 
-        /* Хакерское сердечко */
         .hacker-box {
             background: #140d12;
             color: #ff758c;
@@ -321,9 +320,7 @@
 </head>
 <body>
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" src="music.mp3" loop preload="auto" playsinline></audio>
 
     <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Музыка">
         🎵
@@ -413,7 +410,7 @@
 
     <script>
 
-        const VALID_PASSWORDS = ["Зеркала", "Разбалованная", "зеркала", "разбалованная"];
+        const VALID_PASSWORDS = ["Зеркала", "разбалованная", "Разбалованная", "зеркала"];
 
         const START_DATE = new Date(2026, 6, 13, 0, 0, 0);
 
@@ -446,7 +443,9 @@
                 audio.play().then(() => {
                     musicBtn.classList.add('playing');
                     isPlaying = true;
-                }).catch(() => {});
+                }).catch((err) => {
+                    console.log("Ошибка воспроизведения:", err);
+                });
             }
         }
 
@@ -460,7 +459,6 @@
                 errorMsg.innerText = "";
                 confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
                 
-                // Автоматически запускаем музыку при первом входе
                 if (!isPlaying) {
                     toggleMusic();
                 }
