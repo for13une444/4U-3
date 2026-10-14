@@ -29,6 +29,39 @@
             position: relative;
         }
 
+        .easter-eggs-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .easter-eggs-container.active {
+            opacity: 1;
+        }
+
+        .easter-word {
+            position: absolute;
+            font-size: 13px;
+            font-weight: 700;
+            color: #d84a75;
+            opacity: 0.18;
+            white-space: nowrap;
+            user-select: none;
+            animation: floatSway 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatSway {
+            0% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+            100% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+        }
+
         .music-btn {
             position: fixed;
             top: 16px;
@@ -71,6 +104,7 @@
             display: none;
             animation: fadeIn 0.4s ease forwards;
             position: relative;
+            z-index: 10;
         }
 
         .card.active {
@@ -320,16 +354,37 @@
 </head>
 <body>
 
-    <audio id="bgMusic" src="music.mp3" loop preload="auto" playsinline></audio>
+    <audio id="bgMusic" src="music.mp3" loop preload="auto" playsinline webkit-playsinline></audio>
 
     <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Музыка">
         🎵
     </button>
 
+    <div class="easter-eggs-container" id="easterEggs">
+        <div class="easter-word" style="top: 4%; left: 6%; --rot: -8deg;">Мелиса</div>
+        <div class="easter-word" style="top: 6%; right: 7%; --rot: 10deg;">Ряльно?</div>
+        <div class="easter-word" style="top: 13%; left: 8%; --rot: 6deg;">Мой кайф</div>
+        <div class="easter-word" style="top: 16%; right: 9%; --rot: -7deg;">Белые розы</div>
+        <div class="easter-word" style="top: 24%; left: 4%; --rot: -12deg;">22</div>
+        <div class="easter-word" style="top: 27%; right: 5%; --rot: 8deg;">Fortuna812</div>
+        <div class="easter-word" style="top: 36%; left: 6%; --rot: -5deg;">Сумерки</div>
+        <div class="easter-word" style="top: 41%; right: 6%; --rot: 11deg;">Меньшикова</div>
+        <div class="easter-word" style="top: 49%; left: 4%; --rot: 7deg;">Роща на черемушках</div>
+        <div class="easter-word" style="top: 54%; right: 7%; --rot: -10deg;">Ivoxygen</div>
+        <div class="easter-word" style="top: 62%; left: 8%; --rot: -6deg;">Одни в кино</div>
+        <div class="easter-word" style="top: 67%; right: 6%; --rot: 9deg;">Бойсбенд</div>
+        <div class="easter-word" style="top: 74%; left: 4%; --rot: 4deg;">Не хочешь чтобы я следил?</div>
+        <div class="easter-word" style="top: 79%; right: 8%; --rot: -8deg;">Красной Помадой</div>
+        <div class="easter-word" style="top: 85%; left: 10%; --rot: -6deg;">Мэйкун</div>
+        <div class="easter-word" style="top: 88%; right: 6%; --rot: 11deg;">5,65-5,7</div>
+        <div class="easter-word" style="top: 94%; left: 6%; --rot: 5deg;">Сфинкс</div>
+        <div class="easter-word" style="top: 95%; right: 10%; --rot: -7deg;">Темно синий</div>
+    </div>
+
     <div class="card active" id="screen0">
         <div style="font-size: 44px; margin-bottom: 12px;">🔐🌸</div>
         <h2>Только для тебя</h2>
-        <p class="hint">Введи название твоего любимого исполнителя, но мой любимый трек у него) ✨</p>
+        <p class="hint">Введи название моей любимой песни твоего любимого исполнителя)✨</p>
         
         <input type="text" id="passInput" class="pass-input" placeholder="" autocomplete="off">
         <div id="errorMsg" class="error-msg"></div>
@@ -412,7 +467,7 @@
 
         const VALID_PASSWORDS = ["Зеркала", "разбалованная", "Разбалованная", "зеркала"];
 
-        const START_DATE = new Date(2026, 6, 13, 0, 0, 0);
+        const START_DATE = new Date("2026-07-13T00:00:00");
 
         function updateTimer() {
             const now = new Date();
@@ -433,6 +488,17 @@
         const audio = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         let isPlaying = false;
+
+        function startMusicSafe() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    isPlaying = true;
+                }).catch((e) => {
+                    console.log("Автозапуск заблокирован браузером:", e);
+                });
+            }
+        }
 
         function toggleMusic() {
             if (isPlaying) {
@@ -459,9 +525,9 @@
                 errorMsg.innerText = "";
                 confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
                 
-                if (!isPlaying) {
-                    toggleMusic();
-                }
+                startMusicSafe();
+
+                document.getElementById('easterEggs').classList.add('active');
 
                 goToScreen(1);
             } else {
@@ -484,6 +550,8 @@
         }
 
         function answerYes() {
+            startMusicSafe();
+
             confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
             setTimeout(() => goToScreen(2), 500);
         }
